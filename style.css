@@ -63,6 +63,7 @@ header nav ul li a:hover {
 .hero p {
     font-size: 1.2rem;
     margin: 10px 0 20px;
+    color:black;
 }
 .hero .btn {
     background: #f39c12;
@@ -240,18 +241,28 @@ body {
   
   /* Button */
   .buy-btn {
-    display: inline-block;
-    padding: 10px 15px;
-    background: #27ae60;
-    color: rgb(20, 167, 7);
+    display: block;             /* new line below the price */
+    width: 70%;                /* full width of the product card (optional) */
+    padding: 10px 10px;         /* bigger button */
+    background: #01be0b;        /* green background */
+    color: #fff;                /* white text for contrast */
     border-radius: 6px;
+    text-align: center;         /* center the text inside */
     text-decoration: none;
-    font-weight: 500;
+    font-weight: 600;
+    font-size: 13px;            /* larger text */
+    margin-top: 30px; 
+    margin-left: 30px; 
+    margin-bottom: 20px;         /* space between price and button */
     transition: background 0.3s;
   }
   
   .buy-btn:hover {
-    background: #219150;
+    background: #449601;        /* darker green on hover */
+  }
+  
+  .buy-btn:hover {
+    background: #01ac18;
   }
   
 /* Footer */
@@ -335,5 +346,28 @@ footer {
     margin-top: 20px;
     font-size: 14px;
     color: #bbb;
+  }
+  .products {
+    display: flex;              /* arrange items in a row */
+    flex-wrap: wrap;            /* wrap to next line if screen is small */
+    gap: 20px;                  /* space between products */
+    justify-content: center;    /* center the row */
+    padding: 20px;
+  }
+  
+  .product-card {
+    flex: 0 0 250px;            /* fixed width per card */
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    text-align: center;
+    padding: 15px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    background-color: #fff;
+  }
+  
+  .product-card img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
   }
   
