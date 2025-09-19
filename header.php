@@ -10,7 +10,16 @@
 <body>
   <header>
     <div class="container header-container">
-      <h1 class="logo"><?php bloginfo('name'); ?></h1>
+    <<?php 
+$logo = get_theme_mod('header_logo');
+if ($logo): ?>
+    <img src="<?php echo esc_url($logo); ?>" alt="<?php bloginfo('name'); ?>" class="site-logo">
+<?php else: ?>
+    <h1 class="logo"><?php bloginfo('name'); ?></h1>
+<?php endif; ?>
+
+<p class="site-description"><?php bloginfo('description'); ?></p>
+
       <nav>
         <?php
           wp_nav_menu(array(
