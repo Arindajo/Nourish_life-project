@@ -1,33 +1,35 @@
 <!DOCTYPE html>
-<html lang="en">
+<html <?php language_attributes(); ?>>
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title><?php wp_title('|', true, 'right'); ?> <?php bloginfo('name'); ?></title>
-  <link rel="stylesheet" href="<?php bloginfo('stylesheet_url'); ?>">
-  <?php wp_head(); ?>
+    <meta charset="<?php bloginfo('charset'); ?>">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title><?php wp_title('|', true, 'right'); ?><?php bloginfo('name'); ?></title>
+    <?php wp_head(); ?>
 </head>
-<body>
-  <header>
+<body <?php body_class(); ?>>
+<header>
     <div class="container header-container">
-    <<?php 
-$logo = get_theme_mod('header_logo');
-if ($logo): ?>
-    <img src="<?php echo esc_url($logo); ?>" alt="<?php bloginfo('name'); ?>" class="site-logo">
-<?php else: ?>
-    <h1 class="logo"><?php bloginfo('name'); ?></h1>
-<?php endif; ?>
+        <?php 
+        $logo = get_theme_mod('header_logo');
+        if ($logo): ?>
+            <a href="<?php echo esc_url(home_url('/')); ?>" class="site-logo">
+                <img src="<?php echo esc_url($logo); ?>" alt="<?php echo esc_attr(get_bloginfo('name')); ?>">
+            </a>
+        <?php else: ?>
+            <h1 class="logo"><a href="<?php echo esc_url(home_url('/')); ?>"><?php bloginfo('name'); ?></a></h1>
+        <?php endif; ?>
 
-<p class="site-description"><?php bloginfo('description'); ?></p>
+        <p class="site-description"><?php echo esc_html(get_bloginfo('description')); ?></p>
 
-      <nav>
-        <?php
-          wp_nav_menu(array(
-            'theme_location' => 'header-menu',
-            'container' => false,
-            'menu_class' => ''
-          ));
-        ?>
-      </nav>
+        <nav>
+            <?php
+            wp_nav_menu(array(
+                'theme_location' => 'header-menu',
+                'container'      => false,
+                'menu_class'     => '',
+                'fallback_cb'    => false,
+            ));
+            ?>
+        </nav>
     </div>
-  </header>
+</header>

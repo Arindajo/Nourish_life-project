@@ -3,12 +3,14 @@
 if ( ! defined( 'ABSPATH' ) ) exit;
 
 /**
- * Enqueue Styles
+ * Enqueue Styles and Scripts
  */
-function nourishlife_enqueue_styles() {
-    wp_enqueue_style('style', get_stylesheet_uri());
+function nourishlife_enqueue_assets() {
+    wp_enqueue_style('nourishlife-style', get_stylesheet_uri());
+    // Example: enqueue a custom script if you add JS later
+    // wp_enqueue_script('nourishlife-script', get_template_directory_uri() . '/assets/js/main.js', array('jquery'), null, true);
 }
-add_action('wp_enqueue_scripts', 'nourishlife_enqueue_styles');
+add_action('wp_enqueue_scripts', 'nourishlife_enqueue_assets');
 
 /**
  * Register Menus
@@ -45,7 +47,7 @@ function nourishlife_register_product_cpt() {
         'has_archive'        => true,
         'menu_icon'          => 'dashicons-cart',
         'supports'           => array('title', 'editor', 'thumbnail', 'excerpt'),
-        'show_in_rest'       => true, // for Gutenberg
+        'show_in_rest'       => true, // Gutenberg + Elementor support
         'rewrite'            => array('slug' => 'products'),
     );
 
@@ -54,22 +56,53 @@ function nourishlife_register_product_cpt() {
 add_action('init', 'nourishlife_register_product_cpt');
 
 /**
- * Theme Setup
+ * Theme Setup (Plugin Ready)
  */
 function nourishlife_theme_setup() {
+    // Core supports
+    add_theme_support('title-tag');
+    add_theme_support('post-thumbnails');
+    add_theme_support('widgets');
     add_theme_support('custom-logo', array(
-        'height' => 100,
-        'width'  => 300,
+        'height'      => 100,
+        'width'       => 300,
         'flex-height' => true,
         'flex-width'  => true,
     ));
+
+    // WooCommerce compatibility
+    add_theme_support('woocommerce');
+
+    // Elementor compatibility
+    add_theme_support('elementor');
+
+    // Allow content width (needed for Elementor)
+    global $content_width;
+    if ( ! isset( $content_width ) ) {
+        $content_width = 1200;
+    }
 }
 add_action('after_setup_theme', 'nourishlife_theme_setup');
 
 /**
+ * Widget Areas
+ */
+function nourishlife_widgets_init() {
+    register_sidebar(array(
+        'name'          => __('Sidebar', 'nourishlife'),
+        'id'            => 'sidebar-1',
+        'before_widget' => '<div class="widget">',
+        'after_widget'  => '</div>',
+        'before_title'  => '<h3 class="widget-title">',
+        'after_title'   => '</h3>',
+    ));
+}
+add_action('widgets_init', 'nourishlife_widgets_init');
+
+/**
  * ACF Options Page
  */
-if( function_exists('acf_add_options_page') ) {
+if ( function_exists('acf_add_options_page') ) {
     acf_add_options_page(array(
         'page_title'    => 'Theme Settings',
         'menu_title'    => 'Theme Settings',
@@ -80,13 +113,10 @@ if( function_exists('acf_add_options_page') ) {
 }
 
 /**
- * Customizer Settings (Merged)
+ * Customizer Settings
  */
 function nourishlife_customize_register($wp_customize) {
-
-    // =====================
     // Header Logo
-    // =====================
     $wp_customize->add_setting('header_logo', array(
         'default' => '',
         'sanitize_callback' => 'esc_url_raw'
@@ -101,9 +131,7 @@ function nourishlife_customize_register($wp_customize) {
         )
     ));
 
-    // =====================
     // Colors
-    // =====================
     $wp_customize->add_setting('primary_color', array(
         'default' => '#27ae60',
         'sanitize_callback' => 'sanitize_hex_color',
@@ -130,9 +158,7 @@ function nourishlife_customize_register($wp_customize) {
         )
     ));
 
-    // =====================
     // Fonts
-    // =====================
     $wp_customize->add_section('typography', array(
         'title'    => __('Typography', 'nourishlife'),
         'priority' => 40,
@@ -158,9 +184,7 @@ function nourishlife_customize_register($wp_customize) {
         'type' => 'text',
     ));
 
-    // =====================
     // Buy Button
-    // =====================
     $wp_customize->add_section('buy_button_section', array(
         'title'       => __('Buy Button', 'nourishlife'),
         'priority'    => 30,
@@ -232,7 +256,7 @@ function nourishlife_customizer_css() {
 add_action('wp_head', 'nourishlife_customizer_css');
 
 /**
- * Exclude Footer Settings from menus
+ * Exclude Footer Settings Page
  */
 function nourishlife_exclude_footer_settings($query) {
     if (!is_admin() && $query->is_main_query()) {
@@ -254,11 +278,3 @@ function nourishlife_exclude_footer_settings_page($pages) {
     return $pages;
 }
 add_filter('get_pages', 'nourishlife_exclude_footer_settings_page');
-// Automatically add Products CPT to header menu
-function add_products_to_nav($items, $args) {
-    if ($args->theme_location == 'header-menu') {
-        $items .= '<li><a href="' . get_post_type_archive_link('product') . '">Products</a></li>';
-    }
-    return $items;
-}
-add_filter('wp_nav_menu_items', 'add_products_to_nav', 10, 2);
